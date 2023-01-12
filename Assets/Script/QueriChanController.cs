@@ -17,7 +17,8 @@ public class QueriChanController : MonoBehaviour
     public SingleAssignmentDisposable QueriPinkDispose { get => queriPinkDispose; }
 
     [SerializeField]
-    private ObservableEventTrigger telopTrigger;
+    private ObservableEventTrigger queriPinkTelopTrigger;
+    public ObservableEventTrigger QueriPinkTelopTrigger { get => queriPinkTelopTrigger; }
 
     [SerializeField]
     private Animator anime;
@@ -32,7 +33,7 @@ public class QueriChanController : MonoBehaviour
     [SerializeField]
     private ItemManager itemManager;
     [SerializeField]
-    private Presenter presenter;
+    private ClickManager click;
 
     [SerializeField]
     private GameObject queriChanHead;
@@ -93,16 +94,6 @@ public class QueriChanController : MonoBehaviour
     }
 
     /// <summary>
-    /// クリック時にテロップが出るようにする
-    /// </summary>
-    public void ClickQueriPinkTelop()
-    {
-        telopTrigger.OnPointerDownAsObservable()
-            .Subscribe(_ => uiManager.DisplayTelopModel(7, 3))
-            .AddTo(this);  
-    }
-
-    /// <summary>
     /// クエリちゃんの頭の装飾を消す
     /// </summary>
     public void DestroyQueriHeadgear()
@@ -142,7 +133,7 @@ public class QueriChanController : MonoBehaviour
 
         diff.y = 0; 　//縦回転しないようにする
 
-        if (diff.sqrMagnitude > 0.003f)
+        if (diff.magnitude > 0.002f)
         {
             transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(diff), Time.deltaTime * rotSpeed);
 
@@ -159,9 +150,9 @@ public class QueriChanController : MonoBehaviour
     public IEnumerator SteeringQueriChan()
     {
         //特定のクリックイベントが発生しないようにする
-        for(int i = 0; i < presenter.telopTriggerList.Count; i++)
+        for(int i = 0; i < click.telopTriggerList.Count; i++)
         {
-            presenter.telopTriggerList[i].enabled = false;
+            click.telopTriggerList[i].enabled = false;
         }
 
         itemManager.QueriMovableTrigger.enabled = false;

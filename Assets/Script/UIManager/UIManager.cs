@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     private GameManager gameManager;
     private AudioManager audioManager;
     private ItemManager itemManager;
-    private Presenter presenter;
+    private ClickManager click;
 
     [SerializeField]
     private CameraManager camManager;
@@ -31,6 +31,12 @@ public class UIManager : MonoBehaviour
 
     [SerializeField]
     private QueriChanController queriController;
+
+    [SerializeField]
+    private Fade fade;
+
+    [SerializeField]
+    private FadeImage fadeImg;
 
     [SerializeField]
     private Text txtTelop;
@@ -65,10 +71,9 @@ public class UIManager : MonoBehaviour
     /// <summary>
     /// Presenterクラスを取得する
     /// </summary>
-    /// <param name="presenter"></param>
-    public void SetupUIManager2(Presenter presenter)
+    public void SetupUIManager2(ClickManager click)
     {
-        this.presenter = presenter;
+        this.click = click;
     }
 
     /// <summary>
@@ -147,15 +152,15 @@ public class UIManager : MonoBehaviour
             txtQueriSwitch.Value = "ON";
 
             //クリック機能をオンにする
-            for(int i = 1; i < presenter.telopTriggerList.Count; i++)
+            for(int i = 1; i < click.telopTriggerList.Count; i++)
             {
-                presenter.telopTriggerList[i].enabled = true;
+                click.telopTriggerList[i].enabled = true;
             }
-            for (int i = 0; i < presenter.ChangeCameraTriggers.Length; i++)
+            for (int i = 0; i < click.ChangeCameraTriggers.Length; i++)
             {
-                presenter.ChangeCameraTriggers[i].enabled = true;
-            }
+                click.ChangeCameraTriggers[i].enabled = true;
 
+            }
             //カメラを中央に戻すボタンを使用可に
             //btnReturn.enabled = true;
             btnReturn.gameObject.SetActive(true);
@@ -181,13 +186,13 @@ public class UIManager : MonoBehaviour
             txtQueriSwitch.Value = "OFF";
 
             //クリック機能をオフにする
-            for (int i = 0; i < presenter.telopTriggerList.Count; i++)
+            for (int i = 0; i < click.telopTriggerList.Count; i++)
             {
-                presenter.telopTriggerList[i].enabled = false;
+                click.telopTriggerList[i].enabled = false;
             }
-            for (int i = 0; i < presenter.ChangeCameraTriggers.Length; i++)
-            {
-                presenter.ChangeCameraTriggers[i].enabled = false;
+            for (int i = 0; i < click.ChangeCameraTriggers.Length; i++)
+            { 
+                click.ChangeCameraTriggers[i].enabled = false;
             }
 
             //カメラを中央に戻すボタンを使用可に
@@ -258,5 +263,16 @@ public class UIManager : MonoBehaviour
         tween = txt.DOFade(1, 0.3f)
         .SetLoops(-1, LoopType.Yoyo)
         .SetLink(txt.gameObject);
+    }
+
+    /// <summary>
+    /// シーン遷移　フェードアウト
+    /// </summary>
+    /// <param name="texture"></param>
+    public void FadeOutScreen(Texture texture)
+    {
+        fadeImg.UpdateMaskTexture(texture);
+
+        fade.FadeOut(4);
     }
 }

@@ -10,12 +10,14 @@ public class TreasureChest : MonoBehaviour
 {
     [SerializeField]
     private ObservableEventTrigger openChestTrigger;
+    public ObservableEventTrigger OpenChestTrigger { get => openChestTrigger; }
 
     private SingleAssignmentDisposable chestDispose = new();
     public SingleAssignmentDisposable ChestDispose { get => chestDispose; }
 
     [SerializeField]
     private ObservableEventTrigger treasureChestItemTrigger;
+    public ObservableEventTrigger TreasureChestItemTrigger { get => treasureChestItemTrigger; }
 
     private UIManager uiManager;
     private ItemManager itemManager;
@@ -43,42 +45,8 @@ public class TreasureChest : MonoBehaviour
         this.uiManager = uiManager;
         this.itemManager = itemManager;
         this.audioManager = audioManager;
-
-        ClickTreasureChest1();
-        ClickTreasureChestItem();
     }
 
-    /// <summary>
-    /// 宝箱をクリック時にテロップを出す
-    /// </summary>
-    private void ClickTreasureChest1()
-    {
-        //RunTime時にクリックイベント内容を変更するためデリゲートしておく
-        chestDispose.Disposable = openChestTrigger.OnPointerDownAsObservable()
-            .ThrottleFirst(TimeSpan.FromSeconds(3))
-            .Subscribe(_ => uiManager.DisplayTelopModel(11,3))
-            .AddTo(this);
-    }
-
-    /// <summary>
-    /// 宝箱をクリックした時にOpenTreasureChest()を呼び出す
-    /// </summary>
-    public void ClickTreasureChest2()
-    {
-        openChestTrigger.OnPointerDownAsObservable()
-            .ThrottleFirst(TimeSpan.FromSeconds(4))
-            .Subscribe(_ => itemManager.UseItem())
-            .AddTo(this);
-    }
-
-    /// <summary>
-    /// 宝箱から出現したアイテムをクリックで取得する
-    /// </summary>
-    private void ClickTreasureChestItem()
-    {
-        treasureChestItemTrigger.OnPointerDownAsObservable()
-            .Subscribe(_ => itemManager.GetItem(treasureChestItemTrigger));
-    }
 
     /// <summary>
     /// 宝箱オープン、アイテム出現
