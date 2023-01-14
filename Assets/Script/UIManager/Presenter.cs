@@ -22,6 +22,13 @@ public class Presenter : MonoBehaviour
     private BoxCollider stopCollider;
 
     [SerializeField]
+    private ObservableEventTrigger centerImageTrigger;
+
+    [SerializeField]
+    private ObservableEventTrigger queriSwitchTrigger;
+    public ObservableEventTrigger QueriSwitchTrigger { get => queriSwitchTrigger; }
+
+    [SerializeField]
     private ObservableEventTrigger[] btnTriggers;
     [SerializeField]
     private ObservableEventTrigger[] sliderTriggers;
@@ -50,6 +57,11 @@ public class Presenter : MonoBehaviour
         ReflectQueriSwitchText();
         ReflectHintRoboTelop();
 
+        ClickChangeCamera();
+        ClickReturnCamera();
+        ClickTelopText();
+        ClickDisCenterImage();
+
         CollisionStopCollider();
     }
 
@@ -70,6 +82,9 @@ public class Presenter : MonoBehaviour
             uiManager.displayNumbers[index].Subscribe(x => view.ViewNumber(index, x))
                 .AddTo(this);
         }
+
+        //ついでにUIManagerへPresenterクラスを渡す
+        uiManager.SetupUIManager2(this);
     }
 
     /// <summary>
@@ -115,6 +130,83 @@ public class Presenter : MonoBehaviour
             .AddTo(this);
     }
 
+    /// <summary>
+    /// クリック時に任意のVirtualCameraの優先順位を変更する処理を反映する
+    /// </summary>
+    private void ClickChangeCamera()
+    {
+        for (int i = 0; i < changeCameraTriggers.Length; i++)
+        {
+            int index = i;
+
+            changeCameraTriggers[index].OnPointerDownAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(1))
+                .Subscribe(_ => uiManager.ChangeCamera(index))
+                .AddTo(this);
+        }
+    }
+
+    /// <summary>
+    /// クリック時にカメラをCenterCameraに戻す処理を反映(いろんな機能を試すためにあえてButtonメソッドで
+    /// </summary>
+    private void ClickReturnCamera()
+    {
+        uiManager.BtnReturn.OnClickAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => uiManager.ReturnCamera())
+            .AddTo(this);
+    }
+
+    /// <summary>
+    /// 特定のオブジェクトをクリック時にテロップを表示する
+    /// </summary>
+    private void ClickTelopText()
+    {
+        //棚上クエリちゃんテロップを設定
+        queriDisposable.Disposable = telopTriggerList[0].OnPointerDownAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => uiManager.DisplayTelopModel(0,3))
+            .AddTo(this);
+
+        //ドアのテロップを設定。RunTime中にイベント内容を変更するためDisposable型の変数に代入しておく
+        doorDisposable.Disposable = telopTriggerList[1].OnPointerDownAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => uiManager.DisplayTelopModel(1, 3))
+            .AddTo(this);
+    }
+
+    /// <summary>
+    /// 鍵を手に入れた後のドアをクリックした時のテロップ
+    /// </summary>
+    public void ClickDoor()
+    {
+        telopTriggerList[1].OnPointerDownAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => uiManager.DisplayTelopModel(10, 3))
+            .AddTo(this);
+    }
+
+    /// <summary>
+    /// centerImage表示時、クリックすると非表示になる
+    /// </summary>
+    private void ClickDisCenterImage()
+    {
+        centerImageTrigger.OnPointerDownAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => uiManager.DisCenterImage())
+            .AddTo(this);
+    }
+
+    /// <summary>
+    /// クエリちゃんロゴをクリック時に操作を切り替える
+    /// </summary>
+    public void ClickSwitchQueriControl()
+    {
+        queriSwitchTrigger.OnPointerDownAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(2))
+            .Subscribe(_ => uiManager.SwitchQueriController())
+            .AddTo(this);
+    }
 
     /// <summary>
     /// 条件をクリアしていない場合テロップで注記を出す

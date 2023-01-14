@@ -13,7 +13,7 @@ using UniRx.Triggers;
 public class ItemManager : MonoBehaviour
 {
     [SerializeField]
-    private ClickManager click;
+    private Presenter presenter;
     [SerializeField]
     private Generator generator;
     [SerializeField]
@@ -33,7 +33,6 @@ public class ItemManager : MonoBehaviour
 
     [SerializeField]
     private ObservableEventTrigger[] itemFolderTriggers;
-    public ObservableEventTrigger[] ItemFolderTriggers { get => itemFolderTriggers; }
     [SerializeField]
     private Image[] itemFolders;
 
@@ -65,10 +64,15 @@ public class ItemManager : MonoBehaviour
 
     [SerializeField]
     private ObservableEventTrigger resetPanel;
-    public ObservableEventTrigger ResetPanel { get=>resetPanel; }
 
     private TreasureChest treasureChest;
 
+
+    private void Start()
+    {
+        ClickItemFolder();
+        ClickResetPanel();
+    }
 
     /// <summary>
     /// 各コンポーネントを必要なクラスへ渡す
@@ -176,9 +180,17 @@ public class ItemManager : MonoBehaviour
     }
 
     /// <summary>
+    /// クリックで元に戻る(カメラ・ポーズ)処理の登録
+    /// </summary>
+    private void ClickResetPanel()
+    {
+        resetPanel.OnPointerDownAsObservable()
+            .Subscribe(_ => ResetPanel());
+    }
+    /// <summary>
     /// クリックで元に戻る(カメラ・ポーズ)
     /// </summary>
-    public void DisplayResetPanel()
+    private void ResetPanel()
     {
         getItem.SetActive(false);
 
@@ -193,6 +205,21 @@ public class ItemManager : MonoBehaviour
         resetPanel.gameObject.SetActive(false);
     }
 
+    /// <summary>
+    /// アイテムフォルダをクリック時にReadyUseItemメソッドを呼び出す
+    /// </summary>
+    public void ClickItemFolder()
+    {
+        for(int i = 0; i<itemFolderTriggers.Length; i++)
+        {
+            int index = i;
+
+    itemFolderTriggers[index].OnPointerDownAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(1))
+                .Subscribe(_ => ReadyUseItem(index))
+                .AddTo(this);
+        }
+    }
 
     /// <summary>
     /// アイテムを選択時に使用状態を切り替える
@@ -235,6 +262,19 @@ public class ItemManager : MonoBehaviour
     }
 
     /// <summary>
+    /// タンス上のクエリちゃんをクリック時にUseItem()メソッドを呼び出す
+    /// </summary>
+    public void ClickMovableQueriChan()
+    {
+        presenter.QueriDisposable.Dispose();
+
+        queriMovableTrigger.OnPointerDownAsObservable()
+            .ThrottleFirst(TimeSpan.FromSeconds(1))
+            .Subscribe(_ => UseItem())
+            .AddTo(this);
+    }
+
+    /// <summary>
     /// アイテムを使用時の処理
     /// </summary>
     public void UseItem()
@@ -255,9 +295,7 @@ public class ItemManager : MonoBehaviour
             uiManager.FlashText(txtQueriLogo);
 
             //クエリちゃんロゴをクリックで操作を切り替える
-            click.ClickQueriController();
-
-            uiManager.SetupUIManager2(click);
+            presenter.ClickSwitchQueriControl();
 
             queriHeadgear_UseReady = false;
         }

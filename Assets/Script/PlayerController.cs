@@ -19,13 +19,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private AudioManager gunAudio;
     [SerializeField]
-    private ClickManager click;
+    private Presenter presenter;
 
     [SerializeField]
     private PlayerController player;
-    [SerializeField]
-    private BoxCollider playerCollider;
-
     [SerializeField]
     private Animator skeleton;
 
@@ -57,8 +54,6 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         CollisionEvent();
-
-        //StartCoroutine(GunAction());
     }
 
     /// <summary>
@@ -67,13 +62,10 @@ public class PlayerController : MonoBehaviour
     /// <returns></returns>
     public IEnumerator GunAction()
     {
-        //１度しかイベントが起きないようにコライダーを切る
-        playerCollider.enabled = false;
-
         //各UIを非表示する
         uiManager.BtnReturn.enabled = false;
         imgItemFolder.gameObject.SetActive(false);
-        click.QueriLogoTrigger.gameObject.SetActive(false);
+        presenter.QueriSwitchTrigger.gameObject.SetActive(false);
 
         gun.SetActive(true);
 

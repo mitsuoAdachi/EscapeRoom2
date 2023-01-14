@@ -22,61 +22,81 @@ public class HintRoboController : MonoBehaviour
 
     public  ReactiveProperty<string> HintTelop = new ReactiveProperty<string>();
 
+    void Start()
+    {
+        ClickRobo();
+    }
+
+    /// <summary>
+    /// ヒントロボをクリック時にHint()を呼び出す
+    /// </summary>
+    private void ClickRobo()
+    {
+        roboTrigger.OnPointerClickAsObservable()
+            .Subscribe(_ => Hint())
+            .AddTo(this);
+    }
 
     /// <summary>
     /// その時に必要なヒントを表示する
     /// </summary>
-    public void Hint()
+    private void Hint()
     {
-        if (gameManager.Lockings[0])
+        HintTelop.Value = null;
+
+        if (!gameManager.Locking[3])
+            return;
+
+        if (gameManager.Locking[0])
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "文字と物の色の数をかぞえてみよう！";
+            //HintTelop.Value = "部屋にある色を数えて(細かいところは気にしないで)";
+            HintTelop.Value = "部屋にある色を数えて";
 
             DisTelop();
 
             return;
         }
 
-        if (gameManager.Lockings[1])
+        if (gameManager.Locking[1])
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "ジャンプの高さが違うよ！";
+            HintTelop.Value = "ジャンプの高さが違うよ";
 
             DisTelop();
 
             return;
         }
 
-        if (gameManager.Lockings[2])
+        if (gameManager.Locking[2])
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "部屋にある色の数が変わったよ！";
+            HintTelop.Value = "部屋にある色の数が変わったよ";
 
             DisTelop();
 
             return;
         }
 
-        if (gameManager.Lockings[3])
+        if (gameManager.Locking[3])
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "ピンクの子だけジャンプしなくなったよ！";
+            HintTelop.Value = "ピンクの子がジャンプしなくなったよ";
 
             DisTelop();
 
             return;
         }
 
-        if (!gameManager.Lockings[3])
+        if (!gameManager.Locking[3])
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "宝箱のアイテムでガイコツを倒そう！！";
+            HintTelop.Value = "宝箱のアイテムでガイコツを倒して！";
 
             DisTelop();
         }

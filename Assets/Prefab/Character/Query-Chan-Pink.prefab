@@ -5823,19 +5823,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jumpTrigger: {fileID: 164326607977194729}
-  queriPinkTelopTrigger: {fileID: 164326607977194729}
+  telopTrigger: {fileID: 164326607977194729}
   anime: {fileID: 729400022553738789}
   audioManager: {fileID: 0}
   uiManager: {fileID: 0}
   camManager: {fileID: 0}
   itemManager: {fileID: 0}
-  click: {fileID: 0}
   queriChanHead: {fileID: 527303626712473072}
   rigidQueri: {fileID: 0}
   Ismovable: 0
   speed: 0
   limitSpeed: 0
-  rotSpeed: 0
+  _rotSpeed: 0
 --- !u!114 &164326607977194729
 MonoBehaviour:
   m_ObjectHideFlags: 0

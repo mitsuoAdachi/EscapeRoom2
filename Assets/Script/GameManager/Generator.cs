@@ -20,7 +20,7 @@ public class Generator : MonoBehaviour
     [SerializeField]
     private ItemManager itemManager;
     [SerializeField]
-    private ClickManager click;
+    private Presenter presenter;
 
     [SerializeField]
     private QueriChanController[] queriChans;
@@ -40,13 +40,11 @@ public class Generator : MonoBehaviour
     [SerializeField]
     private Transform houseAppearParTran;
     private ObservableEventTrigger houseTrigger;
-    public ObservableEventTrigger HouseTrigger { get => houseTrigger; }
 
     [SerializeField]
     private TreasureChest tresureChestPrefab;
     [SerializeField]
     private Transform chestTran;
-
     private TreasureChest tresureChest;
 
     [SerializeField]
@@ -135,20 +133,17 @@ public class Generator : MonoBehaviour
         //宝箱を生成
         tresureChest = Instantiate(tresureChestPrefab, chestTran, false);
 
-        //TrsureChestコンポーネントを取得する
+        //ItemManagerにTrsureChestコンポーネントを取得する
         itemManager.SetupItemManager2(tresureChest);
-        click.SetupClickManager1(tresureChest);
 
         //TresureChestクラスでItemManagerコンポーネントを取得する
         tresureChest.SetupTresureChest(uiManager,itemManager, audioManager);
 
         //テロップのON/OFFを切り替えるためのリストに追加
-        click.telopTriggerList.Add(houseTrigger);
+        presenter.telopTriggerList.Add(houseTrigger);
 
         //クリック時にテロップを表示する
-        click.ClickHouse();
-        click.ClickTreasureChest1();
-        click.ClickTreasureChestItem();
+        ClickHouse();
 
         yield return new WaitForSeconds(2);
 
@@ -175,15 +170,12 @@ public class Generator : MonoBehaviour
         QueriChanController queriCon = queriChanList[2].GetComponent<QueriChanController>();
         queriCon.DestroyQueriHeadgear();
 
-        click.SetupClickManager2(queriCon);
-
         //Query-Chan-Pinkをクリック時にテロップが出る内容に変更
         queriCon.QueriPinkDispose.Dispose();
-        click.ClickQueriPinkTelop();
-
+        queriCon.ClickQueriPinkTelop();
 
         //棚上のクエリちゃんのクリックイベントを切り替える
-        click.ClickMovableQueriChan();
+        itemManager.ClickMovableQueriChan();
 
         //ジャンプできなくなったことによりSliderBoardの正解番号が変わる
         gameManager.ChangeCorrectSlider();
@@ -221,9 +213,8 @@ public class Generator : MonoBehaviour
         camManager.ChangePovValue();
 
         //宝箱のクリックイベントを切り替える
-        click.ChestDispose.Dispose();
-        click.ClickTreasureChest2();
-        click.ClickDoor();
+        tresureChest.ChestDispose.Dispose();
+        tresureChest.ClickTreasureChest2();
 
         audioManager.PlaySE(8);
 
@@ -231,4 +222,14 @@ public class Generator : MonoBehaviour
 
         camManager.VCams[10].Priority -= 20;
     }
+
+    /// <summary>
+    /// 家(House)をクリック時に表示するテロップ
+    /// </summary>
+    private void ClickHouse()
+    {
+        houseTrigger.OnPointerDownAsObservable()
+            .Subscribe(_ => uiManager.DisplayTelopModel(8, 3));
+    }
+
 }

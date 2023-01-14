@@ -16,23 +16,44 @@ public class ChestOpen : MonoBehaviour
     private bool[] isOpen = new bool[4];
 
     [SerializeField]
+    private ObservableEventTrigger[] drawers;
+
+    [SerializeField]
     private AudioManager audioManager;
 
     [SerializeField]
     private BoxCollider stopCollider;
 
-    [SerializeField]
-    private ClickManager click;
 
+    private void Start()
+    {
+        ReflectOpenChest();
+    }
+
+    /// <summary>
+    /// 引き出しをクリック時にMovableDrawerを呼び出す
+    /// </summary>
+    private void ReflectOpenChest()
+    {
+        for (int i = 0; i < drawers.Length; i++)
+        {
+            int index = i;
+
+            drawers[index].OnPointerDownAsObservable()
+                .ThrottleFirst(TimeSpan.FromSeconds(1))
+                .Subscribe(_ => MovableDrawer(index))
+                .AddTo(this);
+        }
+    }
 
     /// <summary>
     /// 引き出しの開閉
     /// </summary>
-    public void MovableDrawer(int index)
+    private void MovableDrawer(int index)
     {
         if (!isOpen[index])
         {
-            click.Drawers[index].transform.DOLocalMoveX(-1.5f + index * 0.4f, 1);
+            drawers[index].transform.DOLocalMoveX(-1.5f + index * 0.4f, 1);
 
             audioManager.PlaySE(6);
 
@@ -40,7 +61,7 @@ public class ChestOpen : MonoBehaviour
         }
         else
         {
-            click.Drawers[index].transform.DOLocalMoveX(0, 1);
+            drawers[index].transform.DOLocalMoveX(0, 1);
 
             audioManager.PlaySE(7);
 

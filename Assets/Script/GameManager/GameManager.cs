@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// ゲームのギミックの判定をするクラス
@@ -12,7 +11,7 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     [SerializeField]
-    private ClickManager click;
+    private Presenter presenter;
     [SerializeField]
     private UIManager uiManager;
     [SerializeField]
@@ -29,7 +28,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private bool[] lockings;
-    public bool[] Lockings { get => lockings; }
+    public bool[] Locking { get => Locking; }
 
     [SerializeField]
     private int[] correctNumbers;
@@ -39,14 +38,8 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Image imgGameClear;
 
-    [SerializeField]
-    private Texture fadeoutTexture;
-
     void Start()
     {
-        //フェードアウトでゲームスタート
-        uiManager.FadeOutScreen(fadeoutTexture);
-
         //特定のUIに演出を加えつつ各種コンポーネントを取得する
         uiManager.FlashButton(uiManager.BtnReturn, this, audioManager);
     }
@@ -170,8 +163,8 @@ public class GameManager : MonoBehaviour
         sliderBoardMesh.material = sliderBoardMaterial[2];
 
         //テロップ切り替え
-        click.DoorDisposable.Dispose();
-        click.ClickDoor();
+        presenter.DoorDisposable.Dispose();
+        presenter.ClickDoor();
        
         lockings[3] = false;
     }
@@ -195,10 +188,6 @@ public class GameManager : MonoBehaviour
         correctSliders[2] = 0;
     }
 
-    /// <summary>
-    /// ゲームクリア時の演出
-    /// </summary>
-    /// <returns></returns>
     public IEnumerator GameClear()
     {
         imgGameClear.DOFade(0.7f, 5);
@@ -207,11 +196,11 @@ public class GameManager : MonoBehaviour
         //薬莢音
         audioManager.PlaySE(19);
 
-         yield return new WaitForSeconds(2);
+         yield return new WaitForSeconds(3);
         //歩く音
         audioManager.PlaySE(20);
 
-        　yield return new WaitForSeconds(3);
+        　yield return new WaitForSeconds(2);
         //ドア開閉１
         audioManager.PlaySE(21);
 
@@ -221,9 +210,5 @@ public class GameManager : MonoBehaviour
 
         //歩く音徐々に遠くなる
         audioManager.SSEs[20].DOFade(0, 10);
-
-        yield return new WaitForSeconds(10);
-
-        SceneManager.LoadScene("TitleScene");
     }
 }
