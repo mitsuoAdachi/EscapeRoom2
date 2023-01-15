@@ -30,6 +30,7 @@ public class AudioManager : MonoBehaviour
     public void PlayBGM(int index)
     {
         BGMs[index].Play();
+        BGMs[index].DOFade(0.8f, 5);
 
         bgmNo = index;
     }
@@ -57,5 +58,11 @@ public class AudioManager : MonoBehaviour
     public void PlaySE(int index)
     {
         SEs[index].Play();
+    }
+
+    public void StopSE(int index)
+    {
+        SEs[index].Stop();
+
     }
 }

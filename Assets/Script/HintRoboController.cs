@@ -15,6 +15,9 @@ public class HintRoboController : MonoBehaviour
     private UIManager UIManager;
 
     [SerializeField]
+    private AudioManager audioManager;
+
+    [SerializeField]
     private Animator anime;
 
     [SerializeField]
@@ -28,6 +31,10 @@ public class HintRoboController : MonoBehaviour
     /// </summary>
     public void Hint()
     {
+        //素材のAudioClipの再生時間が長いので１秒だけ再生されるようにした
+        audioManager.PlaySE(24);
+        audioManager.SSEs[24].DOFade(0, 1);
+
         if (gameManager.Lockings[0])
         {
             anime.SetTrigger("hint");

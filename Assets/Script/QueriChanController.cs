@@ -166,7 +166,7 @@ public class QueriChanController : MonoBehaviour
         camManager.VCams[8].Priority += 10;
 
         //テロップ表示
-        uiManager.DisplayTelopModel(3,4);
+        uiManager.DisplayTelopModel(3,3);
 
         //決めポーズ
         anime.SetTrigger("getItem");

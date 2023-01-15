@@ -25,7 +25,10 @@ public class UIManager : MonoBehaviour
     public IntReactiveProperty[] displayNumbers;
     public StringReactiveProperty[] displayTelops;
 
+    public ReactiveProperty<Sprite> displayItemSprite;
+
     public ReactiveProperty<string> txtQueriSwitch = new ReactiveProperty<string>();
+
     [SerializeField]
     private bool queriswitch;
 
@@ -42,7 +45,6 @@ public class UIManager : MonoBehaviour
     private Text txtTelop;
     public Text TxtTelop { get => txtTelop; }
 
-    public ReactiveProperty<Sprite> displayItemSprite;
     [SerializeField]
     private Image imgCenter;
     public Image ImagCenter { get => imgCenter; }
