@@ -1,4 +1,3 @@
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -64,7 +63,7 @@ public class Presenter : MonoBehaviour
 
             btnTriggers[index].OnPointerDownAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
-                .Subscribe(_ => uiManager.ChangeNumberModel(index))
+                .Subscribe(async _ => await uiManager.ChangeNumberModel(index))
                 .AddTo(this);
 
             uiManager.displayNumbers[index].Subscribe(x => view.ViewNumber(index, x))
@@ -83,7 +82,7 @@ public class Presenter : MonoBehaviour
 
             sliderTriggers[index].OnPointerDownAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(0.1f))
-                .Subscribe(_ => uiManager.ChangeSliderValueModel(index))
+                .Subscribe(async _ => await uiManager.ChangeSliderValueModel(index))
                 .AddTo(this);
         }
     }

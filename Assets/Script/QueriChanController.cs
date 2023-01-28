@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 ///　ユニティちゃんに関する行動、影響に関するクラス
@@ -147,7 +148,7 @@ public class QueriChanController : MonoBehaviour
     /// 操作をクエリちゃんに切り替えとその時の演出
     /// </summary>
     /// <returns></returns>
-    public IEnumerator SteeringQueriChan()
+    public async UniTask SteeringQueriChan()
     {
         //特定のクリックイベントが発生しないようにする
         for(int i = 0; i < click.telopTriggerList.Count; i++)
@@ -160,7 +161,7 @@ public class QueriChanController : MonoBehaviour
         //カメラを中央に戻すボタンを使用不可に
         uiManager.BtnReturn.gameObject.SetActive(false);
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         //カメラ切り替え
         camManager.VCams[8].Priority += 10;
@@ -180,7 +181,7 @@ public class QueriChanController : MonoBehaviour
         //プレイヤーが見える状態にする
         uiManager.Player.SetActive(true);
 
-        yield return new WaitForSeconds(4);
+        await UniTask.Delay(4000);
 
         //クエリちゃん操作用カメラ切り替え
         camManager.VCams[8].Priority -= 10;

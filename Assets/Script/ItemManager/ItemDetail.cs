@@ -60,7 +60,7 @@ public class ItemDetail : MonoBehaviour
     {
         obj.OnPointerDownAsObservable()
             .ThrottleFirst(TimeSpan.FromSeconds(1))
-            .Subscribe(_ => itemManager.GetItem(obj))
+            .Subscribe(async _ => await itemManager.GetItem(obj))
             .AddTo(this);
     }
 

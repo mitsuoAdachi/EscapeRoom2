@@ -32,6 +32,7 @@ public class HintRoboController : MonoBehaviour
     public void Hint()
     {
         //素材のAudioClipの再生時間が長いので１秒だけ再生されるようにした
+        audioManager.SSEs[24].DOFade(1, 0);
         audioManager.PlaySE(24);
         audioManager.SSEs[24].DOFade(0, 1);
 
@@ -39,7 +40,7 @@ public class HintRoboController : MonoBehaviour
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "文字と物の色の数をかぞえてみよう！";
+            HintTelop.Value = "部屋にある色の数をかぞえてみよう！";
 
             DisTelop();
 
@@ -50,7 +51,7 @@ public class HintRoboController : MonoBehaviour
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "ジャンプの高さが違うよ！";
+            HintTelop.Value = "クエリちゃんのジャンプの高さが違うよ！";
 
             DisTelop();
 
@@ -72,7 +73,7 @@ public class HintRoboController : MonoBehaviour
         {
             anime.SetTrigger("hint");
 
-            HintTelop.Value = "ピンクの子だけジャンプしなくなったよ！";
+            HintTelop.Value = "ピンクの子がジャンプしなくなったよ！";
 
             DisTelop();
 
@@ -96,7 +97,7 @@ public class HintRoboController : MonoBehaviour
     {
         DOVirtual.DelayedCall(3, () =>
         {
-            UIManager.TxtTelop.text = null;
+            HintTelop.Value = null;
         });
     }
 }

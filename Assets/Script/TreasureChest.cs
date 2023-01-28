@@ -5,6 +5,8 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
+
 
 public class TreasureChest : MonoBehaviour
 {
@@ -52,21 +54,21 @@ public class TreasureChest : MonoBehaviour
     /// 宝箱オープン、アイテム出現
     /// </summary>
     /// <returns></returns>
-    public IEnumerator OpenTreasureChest()
+    public async UniTask OpenTreasureChest()
     {
-        if(!itemManager.TreasureChestKey_UseReady) yield break;
+        if(!itemManager.TreasureChestKey_UseReady) return;
 
         //エフェクト演出
         chestParticle.Play();
 
         audioManager.PlaySE(12);
 
-        yield return new WaitForSeconds(1);
+        await UniTask.Delay(1000);
 
         //宝箱を開く
         openChest.SetTrigger("open");
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         gunParticle.Play();
 
@@ -76,5 +78,4 @@ public class TreasureChest : MonoBehaviour
 
         DOTween.Sequence().Append(tweener1).Append(tweener2);
     }
-
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
 using UniRx.Triggers;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 /// 取得アイテムの取得・使用などを管理するクラス
@@ -89,7 +90,7 @@ public class ItemManager : MonoBehaviour
     /// アイテムを取得
     /// </summary>
     /// <param name="obj"></param>
-    public void GetItem(ObservableEventTrigger obj)
+    public async UniTask GetItem(ObservableEventTrigger obj)
     {
         //クリックしたアイテムのItemDetailコンポーネントを取得する
         if (obj.gameObject.TryGetComponent(out ItemDetail itemDetail))
@@ -102,7 +103,7 @@ public class ItemManager : MonoBehaviour
 
             if (itemDetail.ItemType == ItemType.obj)
             {
-                StartCoroutine(GetItemObj(itemDetail, obj));
+                await GetItemObj(itemDetail, obj);
             }
         }
     }
@@ -134,7 +135,7 @@ public class ItemManager : MonoBehaviour
     /// </summary>
     /// <param name="itemDetail"></param>
     /// <param name="obj"></param>
-    private IEnumerator GetItemObj(ItemDetail itemDetail, ObservableEventTrigger obj)
+    private async UniTask GetItemObj(ItemDetail itemDetail, ObservableEventTrigger obj)
     {
         audioManager.PlaySE(9);
 
@@ -153,7 +154,7 @@ public class ItemManager : MonoBehaviour
         //GetItemCameraに切り替える
         camManager.VCams[8].Priority += 10;
 
-        yield return new WaitForSeconds(3);
+        await UniTask.Delay(3000);
 
         audioManager.PlaySE(13);
 
@@ -169,7 +170,7 @@ public class ItemManager : MonoBehaviour
         //該当するテロップを表示する
         uiManager.DisplayTelopModel(itemDetail.ItemNo, 3);
 
-         yield return new WaitForSeconds(3);
+        await UniTask.Delay(3000);
 
         //クリックで元に戻る(カメラ・ポーズ) resetPanelの表示
         resetPanel.gameObject.SetActive(true);
@@ -237,7 +238,7 @@ public class ItemManager : MonoBehaviour
     /// <summary>
     /// アイテムを使用時の処理
     /// </summary>
-    public void UseItem()
+    public async UniTask UseItem()
     {
         //クエリちゃんコントローラー使用時
         if (queriHeadgear_UseReady)
@@ -249,7 +250,7 @@ public class ItemManager : MonoBehaviour
             DisItemFolder(generator.getItemList[0].ItemSprite);
 
             //操作をクエリちゃんに切り替える
-            StartCoroutine(movableQueri.SteeringQueriChan());
+            await movableQueri.SteeringQueriChan();
 
             //クエリちゃんロゴにON/OFFのテキストを表示(点滅)
             uiManager.FlashText(txtQueriLogo);
@@ -265,7 +266,7 @@ public class ItemManager : MonoBehaviour
         //鍵を使用時
         if(treasureChestKey_UseReady)
         {
-            StartCoroutine(treasureChest.OpenTreasureChest());
+            await treasureChest.OpenTreasureChest();
 
             DisItemFolder(generator.getItemList[1].ItemSprite);
         }
@@ -273,9 +274,9 @@ public class ItemManager : MonoBehaviour
         //ガイコツバスターを使用時
         if (skeletonBuster_UseReady)
         {
-            DisItemFolder(generator.getItemList[2].ItemSprite);
+            await player.GunAction();
 
-            StartCoroutine(player.GunAction());
+            DisItemFolder(generator.getItemList[2].ItemSprite);
         }
     }
 

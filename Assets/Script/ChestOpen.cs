@@ -5,6 +5,7 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 using DG.Tweening;
+using System.Linq;
 
 /// <summary>
 /// タンスの引き出しの開閉にまつわる機能
@@ -48,13 +49,13 @@ public class ChestOpen : MonoBehaviour
         }
 
         //全てのisOpenがtrue(全ての引き出しが開けてある)であれば条件を満たす
-        if (!isOpen[0]) return;
-        if (!isOpen[1]) return;
-        if (!isOpen[2]) return;
-        if (!isOpen[3]) return;
 
-        audioManager.PlaySE(8);
+        if(isOpen.All(x => x == true))
+        {
+            audioManager.PlaySE(8);
 
-        stopCollider.enabled = false;      
+            //チェストの上から降りれないようにしていたColliderを切る
+            stopCollider.enabled = false;
+        }
     }
 }

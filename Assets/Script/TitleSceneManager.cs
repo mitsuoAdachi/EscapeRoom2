@@ -5,7 +5,12 @@ using UniRx.Triggers;
 using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
+
+/// <summary>
+/// タイトルシーン用のクラス。スタートボタンとフェードインの設定に関する処理。
+/// </summary>
 public class TitleSceneManager : MonoBehaviour
 {
     [SerializeField]
@@ -34,22 +39,28 @@ public class TitleSceneManager : MonoBehaviour
         ClickTitle();
     }
 
-
-    private IEnumerator GameStart()
+    /// <summary>
+    /// スタートボタン押下時の処理
+    /// </summary>
+    /// <returns></returns>
+    private async UniTask GameStart()
     {
         startSE.Play();
 
         ShakeImage();
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         playerAnime.SetTrigger("gunshoot");
     }
-    
+
+    /// <summary>
+    /// スタートボタンにクリック機能を付与する
+    /// </summary>
     private void ClickTitle()
     {
         startButton.OnPointerDownAsObservable()
-            .Subscribe(_ => StartCoroutine(GameStart()))
+            .Subscribe(async _ => await GameStart())
             .AddTo(this);          
     }
 

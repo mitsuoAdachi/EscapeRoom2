@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
+
 
 /// <summary>
 /// タイトルシーン用のプレイヤーの挙動に関するクラス
@@ -35,14 +37,14 @@ public class PlayerController_Title : MonoBehaviour
     /// AnimationEventで実行。弾丸がカメラに向かってくる演出でMainSceneに遷移する
     /// </summary>
     /// <returns></returns>
-    public IEnumerator Shooting()
+    public async UniTask Shooting()
     {
         //発砲エフェクト
         gunParticle.Play();
 
         gunSE.Play();
 
-        yield return new WaitForSeconds(0.1f);
+        await UniTask.Delay(100);
 
         //弾丸生成
         GameObject bullet = Instantiate(bulletPrefab, bulletTran, false);
@@ -53,11 +55,11 @@ public class PlayerController_Title : MonoBehaviour
         //生成された弾丸が目標に向かってまっすぐ飛ぶ
         bullet.transform.DOMove(target, 4);
 
-        yield return new WaitForSeconds(1f);
+        await UniTask.Delay(1000);
 
         titleScene.FadeInScreen(fadeInTexture);
 
-        yield return new WaitForSeconds(5);
+        await UniTask.Delay(5000);
 
         SceneManager.LoadScene("MainScene");
     }

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using UniRx;
 using UniRx.Triggers;
+using Cysharp.Threading.Tasks;
 
 public class PlayerController : MonoBehaviour
 {
@@ -65,7 +66,7 @@ public class PlayerController : MonoBehaviour
     /// 銃を撃つ演出
     /// </summary>
     /// <returns></returns>
-    public IEnumerator GunAction()
+    public async UniTask GunAction()
     {
         //１度しかイベントが起きないようにコライダーを切る
         playerCollider.enabled = false;
@@ -85,7 +86,7 @@ public class PlayerController : MonoBehaviour
         //銃を構えて撃つ
         gunAnime.SetTrigger("gunshoot");
 
-         yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         gunAudio.PlaySE(23);
     }
@@ -93,7 +94,7 @@ public class PlayerController : MonoBehaviour
     /// <summary>
     /// 弾丸を飛ばしてガイコツを倒す演出まで。AnimationEventで実行する
     /// </summary>
-    public IEnumerator ShootingBullet()
+    public async UniTask ShootingBullet()
     {
         //発砲エフェクト
         gunPartical.Play();
@@ -112,7 +113,7 @@ public class PlayerController : MonoBehaviour
         //目標目線のカメラに切り替え
         camManager.VCams[12].Priority += 50;
 
-        yield return new WaitForSeconds(1);
+        await UniTask.Delay(1000);
 
         //カメラを切り替えつつスローモーションにする
         Time.timeScale = 0.3f;
@@ -121,11 +122,11 @@ public class PlayerController : MonoBehaviour
 
         camManager.VCams[13].Priority += 60;
 
-        yield return new WaitForSeconds(1);
+        await UniTask.Delay(1000);
 
         Time.timeScale = 3;
 
-        yield return new WaitForSeconds(3);
+        await UniTask.Delay(3000);
 
         //目標にヒット
         gunAudio.PlaySE(16);
@@ -133,7 +134,7 @@ public class PlayerController : MonoBehaviour
         //スローモーション解除
         Time.timeScale = 1;
 
-        yield return new WaitForSeconds(1);
+        await UniTask.Delay(1000);
 
         Destroy(bullet);
 
@@ -144,17 +145,17 @@ public class PlayerController : MonoBehaviour
 
         gunAudio.PlaySE(17);
 
-        yield return new WaitForSeconds(4);
+        await UniTask.Delay(4000);
 
         gunAudio.PlaySE(18);
 
         //ガイコツを削除
         Destroy(skeleton.gameObject);
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         //ゲームクリア演出
-        StartCoroutine(gameManager.GameClear());
+        await gameManager.GameClear();
         
     }
 

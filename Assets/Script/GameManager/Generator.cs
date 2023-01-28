@@ -4,9 +4,10 @@ using UnityEngine;
 using DG.Tweening;
 using UniRx;
 using UniRx.Triggers;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
-/// ランタイム時に生成されるオブジェクトに関する処理をするクラス
+/// ギミックを解くごとに出現するオブジェクト(クエリちゃんズ、家、クエリちゃんコントローラー、鍵)の生成に関するメソッド
 /// Hierarchy:"GameManager"にアタッチ
 /// </summary>
 public class Generator : MonoBehaviour
@@ -62,13 +63,17 @@ public class Generator : MonoBehaviour
     private Transform keyTran;
     public List<ItemDetail> getItemList = new List<ItemDetail>();
 
-
     /// <summary>
     /// クエリちゃんを順番に生成する
     /// </summary>
+    /// <param name="gameManager"></param>
+    /// <param name="uiManager"></param>
+    /// <param name="audioManager"></param>
     /// <returns></returns>
-    public IEnumerator GenerateQueriChans(GameManager gameManager,UIManager uiManager,AudioManager audioManager)
+    public async UniTask GenerateQueriChanAsync(GameManager gameManager, UIManager uiManager, AudioManager audioManager)
     {
+        await UniTask.Delay(3000);
+
         //各クラスを取得しておく
         this.gameManager = gameManager;
         this.uiManager = uiManager;
@@ -80,16 +85,16 @@ public class Generator : MonoBehaviour
         //カメラを切り替える
         camManager.VCams[2].Priority += 10;
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
-        for (int i = 0;i < queriChans.Length; i++)
+        for (int i = 0; i < queriChans.Length; i++)
         {
             //クエリちゃんを生成時のエフェクト
             Instantiate(queriAppearParticle, queriTrans[i], false);
 
             audioManager.PlaySE(0);
 
-            yield return new WaitForSeconds(0.3f);
+            await UniTask.Delay(300);
 
             //コンポーネント(自作クラス)でインスタンス化する
             QueriChanController queri = Instantiate(queriChans[i], queriTrans[i], false);
@@ -97,14 +102,13 @@ public class Generator : MonoBehaviour
             queriChanList.Add(queri);
 
             //各種コンポーネントを取得
-            queri.SetupQueriChanController(uiManager,audioManager);
+            queri.SetupQueriChanController(uiManager, audioManager);
 
             queri.Jump();
 
-            yield return new WaitForSeconds(0.1f);
+            await UniTask.Delay(100);
         }
-
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         //切り替えたカメラを元のカメラに戻す
         camManager.VCams[2].Priority -= 10;
@@ -114,20 +118,22 @@ public class Generator : MonoBehaviour
     /// 家プレハブを生成する
     /// </summary>
     /// <returns></returns>
-    public IEnumerator GenerateHouse()
+    public async UniTask GenerateHouse()
     {
+        await UniTask.Delay(3000);
+
         camManager.VCams[5].Priority += 10;
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         //家を出現するエフェクトを生成
         Instantiate(houseAppearParticle, houseAppearParTran, false);
 
-        yield return new WaitForSeconds(0.1f);
+        await UniTask.Delay(100);
 
         audioManager.PlaySE(0);
 
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
 
         //家を生成
         houseTrigger = Instantiate(housePrefab, houseTran, false);
@@ -150,26 +156,28 @@ public class Generator : MonoBehaviour
         click.ClickTreasureChest1();
         click.ClickTreasureChestItem();
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
-       camManager.VCams[5].Priority -= 10;
+        camManager.VCams[5].Priority -= 10;
     }
 
     /// <summary>
     /// Query-Chan-Pinkが付けているヘッドギアが消えて足元に落ちる演出
     /// </summary>
     /// <returns></returns>
-    public IEnumerator DropQueriChanItem()
+    public async UniTask DropQueriChanItem()
     {
+        await UniTask.Delay(3000);
+
         //指定のカメラに切り替える
         camManager.VCams[7].Priority += 10;
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         //アイテムが消える時のエフェクト
         parDisappear.Play();
 
-        yield return new WaitForSeconds(1);
+        await UniTask.Delay(1000);
 
         //Query-Chan-Pinkの頭の装飾の情報を取得して破棄
         QueriChanController queriCon = queriChanList[2].GetComponent<QueriChanController>();
@@ -196,7 +204,7 @@ public class Generator : MonoBehaviour
         //ItemManagerクラスにヘッドギアのItemDetailクラスを渡す
         itemManager.SetupItemManager1(queriHedgear);
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         //カメラを切り替える
         camManager.VCams[7].Priority -= 10;
@@ -205,11 +213,13 @@ public class Generator : MonoBehaviour
     /// <summary>
     /// 鍵を生成
     /// </summary>
-    public IEnumerator DropKey()
+    public async UniTask DropKey()
     {
+        await UniTask.Delay(3000);
+
         camManager.VCams[10].Priority += 20;
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         //鍵生成
         ItemDetail key = Instantiate(keyPrefab, keyTran, false);
@@ -227,7 +237,7 @@ public class Generator : MonoBehaviour
 
         audioManager.PlaySE(8);
 
-        yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
 
         camManager.VCams[10].Priority -= 20;
     }

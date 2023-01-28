@@ -4,6 +4,8 @@ using UnityEngine;
 using DG.Tweening;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using Cysharp.Threading.Tasks;
+
 
 /// <summary>
 /// ゲームのギミックの判定をするクラス
@@ -45,7 +47,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         //フェードアウトでゲームスタート
-        uiManager.FadeOutScreen(fadeoutTexture);
+        //uiManager.FadeOutScreen(fadeoutTexture);
 
         //特定のUIに演出を加えつつ各種コンポーネントを取得する
         uiManager.FlashButton(uiManager.BtnReturn, this, audioManager);
@@ -54,7 +56,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// NumbeBoardの施錠を正解の配列と一致するかで判定
     /// </summary>
-    public void JudgeNumberBoard()
+    public async UniTask JudgeNumberBoard()
     {
         if (!lockings[0]) return;
 
@@ -66,12 +68,9 @@ public class GameManager : MonoBehaviour
         Debug.Log("NumberBoard 開錠");
 
         audioManager.PlaySE(1);
-
-        DOVirtual.DelayedCall( 3, () =>
-        {
-            //クエリちゃん達を生成する
-            StartCoroutine(generator.GenerateQueriChans( this, uiManager, audioManager));
-        });
+       
+        //クエリちゃん達を生成する
+        await generator.GenerateQueriChanAsync(this, uiManager, audioManager);       
 
         //SliderBoardのマテリアルを変更して次のギミックをわかりやすくする
         sliderBoardMesh.material = sliderBoardMaterial[0];
@@ -83,7 +82,7 @@ public class GameManager : MonoBehaviour
     /// (正解番号変更後)NumbeBoardの施錠を正解の配列と一致するかで判定
     /// </summary>
     /// <returns></returns>
-    public void JudgeNumberBoard_2()
+    public async UniTask JudgeNumberBoard_2()
     {
         if (lockings[1]) return;
         else if(!lockings[2]) return;
@@ -99,10 +98,7 @@ public class GameManager : MonoBehaviour
 
         audioManager.PlaySE(1);
 
-        DOVirtual.DelayedCall(3, () =>
-        {
-            StartCoroutine(generator.DropQueriChanItem());
-        });
+        await generator.DropQueriChanItem();
 
         lockings[2] = false;
     }
@@ -110,7 +106,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// SliderBoardの施錠を正解の配列と一致するかで判定
     /// </summary>
-    public void JudgeSliderBoard()
+    public async UniTask JudgeSliderBoard()
     {
         if (lockings[0]) return;
         if (!lockings[1]) return;
@@ -128,11 +124,8 @@ public class GameManager : MonoBehaviour
 
         ChangeCorrectNumber();
 
-        DOVirtual.DelayedCall( 3,() =>
-        {
-            //家(ミニチュア)を生成する
-            StartCoroutine(generator.GenerateHouse());
-        });
+        //家(ミニチュア)を生成する
+        await generator.GenerateHouse();
 
         //SliderBoardのマテリアルを変更して次のギミックをわかりやすくする
         sliderBoardMesh.material = sliderBoardMaterial[1];
@@ -143,7 +136,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// (正解番号変更後)SliderBoardの施錠を正解の配列と一致するかで判定
     /// </summary>
-    public void JudgeSliderBoard_2()
+    public async UniTask JudgeSliderBoard_2()
     {
         if (lockings[2]) return;
         if (!lockings[3]) return;
@@ -160,11 +153,8 @@ public class GameManager : MonoBehaviour
 
         audioManager.PlaySE(1);
 
-        DOVirtual.DelayedCall(3, () =>
-        {
-            //鍵が床"LookUp"の場所にドロップ
-            StartCoroutine(generator.DropKey());
-        });
+        //鍵が床"LookUp"の場所にドロップ
+        await generator.DropKey();
 
         //SliderBoardのマテリアルを変更して次のギミックの場所をわかりやすくする
         sliderBoardMesh.material = sliderBoardMaterial[2];
@@ -199,7 +189,7 @@ public class GameManager : MonoBehaviour
     /// ゲームクリア時の演出
     /// </summary>
     /// <returns></returns>
-    public IEnumerator GameClear()
+    public async UniTask GameClear()
     {
         imgGameClear.DOFade(0.7f, 5);
         imgGameClear.transform.DOLocalMoveY(imgGameClear.transform.position.y + 0.5f, 5);
@@ -207,22 +197,22 @@ public class GameManager : MonoBehaviour
         //薬莢音
         audioManager.PlaySE(19);
 
-         yield return new WaitForSeconds(2);
+        await UniTask.Delay(2000);
         //歩く音
         audioManager.PlaySE(20);
 
-        　yield return new WaitForSeconds(3);
+        await UniTask.Delay(3000);
         //ドア開閉１
         audioManager.PlaySE(21);
 
-        yield return new WaitForSeconds(0.5f);
+        await UniTask.Delay(500);
         //ドア開閉２
         audioManager.PlaySE(22);
 
         //歩く音徐々に遠くなる
         audioManager.SSEs[20].DOFade(0, 10);
 
-        yield return new WaitForSeconds(10);
+        await UniTask.Delay(10000);
 
         SceneManager.LoadScene("TitleScene");
     }

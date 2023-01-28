@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using UniRx;
 using Cinemachine;
 using DG.Tweening;
+using Cysharp.Threading.Tasks;
 
 /// <summary>
 /// UIにまつわる機能を管理するクラス
@@ -13,6 +14,7 @@ using DG.Tweening;
 public class UIManager : MonoBehaviour
 {
     private Tween tween;
+    public Tween Tween { get => tween; }
 
     private GameManager gameManager;
     private AudioManager audioManager;
@@ -82,7 +84,7 @@ public class UIManager : MonoBehaviour
     /// NumberBoardの数値の変化を設定
     /// </summary>
     /// <param name="index"></param>
-    public void ChangeNumberModel(int index)
+    public async UniTask ChangeNumberModel(int index)
     {
         displayNumbers[index].Value += 1;
 
@@ -93,15 +95,15 @@ public class UIManager : MonoBehaviour
 
         audioManager.PlaySE(3);
 
-        gameManager.JudgeNumberBoard();
-        gameManager.JudgeNumberBoard_2();
+        await gameManager.JudgeNumberBoard();
+        await gameManager.JudgeNumberBoard_2();
     }
 
     /// <summary>
     /// スライダーをクリックした時の設定
     /// </summary>
     /// <param name="index"></param>
-    public void ChangeSliderValueModel(int index)
+    public async UniTask ChangeSliderValueModel(int index)
     {
         sliders[index].value += 1;
 
@@ -112,8 +114,8 @@ public class UIManager : MonoBehaviour
 
         audioManager.PlaySE(4);
 
-        gameManager.JudgeSliderBoard();
-        gameManager.JudgeSliderBoard_2();
+        await gameManager.JudgeSliderBoard();
+        await gameManager.JudgeSliderBoard_2();
     }
 
     /// <summary>
@@ -140,7 +142,7 @@ public class UIManager : MonoBehaviour
     }
 
     /// <summary>
-    /// クエリチャン操作のON/OFF
+    /// 操作クエリちゃんの操作を切り替えるON/OFF
     /// </summary>
     /// <param name="on_off"></param>
     public void SwitchQueriController()
@@ -164,7 +166,6 @@ public class UIManager : MonoBehaviour
 
             }
             //カメラを中央に戻すボタンを使用可に
-            //btnReturn.enabled = true;
             btnReturn.gameObject.SetActive(true);
 
             //プレイヤーを非表示
@@ -210,34 +211,6 @@ public class UIManager : MonoBehaviour
             audioManager.ChangeBGM(1);
 
             queriswitch = false;
-        }
-    }
-
-    /// <summary>
-    /// VirtualCameraの優先順位を調整
-    /// </summary>
-    /// <param name="index"></param>
-    public void ChangeCamera(int index)
-    {
-        btnReturn.interactable = true;
-
-        tween.Restart();
-
-        camManager.VCams[index].Priority += 10;
-    }
-
-    /// <summary>
-    /// CenterCameraに戻る処理
-    /// </summary>
-    public void ReturnCamera()
-    {
-        btnReturn.interactable = false;
-
-        tween.Pause();
-
-        for(int i = 0; i < camManager.VCams.Length; i++)
-        {
-            camManager.VCams[i].Priority = 1;
         }
     }
 

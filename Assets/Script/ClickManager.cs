@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
+using Cysharp.Threading.Tasks;
+
 
 /// <summary>
 /// クリックイベントを管理
@@ -24,6 +26,8 @@ public class ClickManager : MonoBehaviour
     private HintRoboController hintRobo;
     [SerializeField]
     private ChestOpen chestOpen;
+    [SerializeField]
+    private CameraManager camManager;
 
     [SerializeField]
     private TreasureChest treasureChest;
@@ -86,7 +90,7 @@ public class ClickManager : MonoBehaviour
 
             changeCameraTriggers[index].OnPointerDownAsObservable()
                 .ThrottleFirst(TimeSpan.FromSeconds(1))
-                .Subscribe(_ => uiManager.ChangeCamera(index))
+                .Subscribe(_ => camManager.ChangeCamera(index))
                 .AddTo(this);
         }
     }
@@ -98,7 +102,7 @@ public class ClickManager : MonoBehaviour
     {
         uiManager.BtnReturn.OnClickAsObservable()
             .ThrottleFirst(TimeSpan.FromSeconds(1))
-            .Subscribe(_ => uiManager.ReturnCamera())
+            .Subscribe(_ => camManager.ReturnCamera())
             .AddTo(this);
     }
 
@@ -232,7 +236,7 @@ public class ClickManager : MonoBehaviour
     public void ClickTreasureChestItem()
     {
         treasureChest.TreasureChestItemTrigger.OnPointerDownAsObservable()
-            .Subscribe(_ => itemManager.GetItem(treasureChest.TreasureChestItemTrigger));
+            .Subscribe(async _ => await itemManager.GetItem(treasureChest.TreasureChestItemTrigger));
     }
 
 
@@ -255,7 +259,7 @@ public class ClickManager : MonoBehaviour
 
         itemManager.QueriMovableTrigger.OnPointerDownAsObservable()
             .ThrottleFirst(TimeSpan.FromSeconds(1))
-            .Subscribe(_ => itemManager.UseItem())
+            .Subscribe(async _ => await itemManager.UseItem())
             .AddTo(this);
     }
 
@@ -266,7 +270,7 @@ public class ClickManager : MonoBehaviour
     {
         treasureChest.OpenChestTrigger.OnPointerDownAsObservable()
             .ThrottleFirst(TimeSpan.FromSeconds(4))
-            .Subscribe(_ => itemManager.UseItem())
+            .Subscribe(async _ => await itemManager.UseItem())
             .AddTo(this);
     }
 

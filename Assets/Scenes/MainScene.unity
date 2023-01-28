@@ -1833,7 +1833,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 3887d330c8dcb0b458244e1542f3a100, type: 2}
   - {fileID: 2100000, guid: 030af699741b37a4dbb1cda52f6e2ffc, type: 2}
   lockings: 01010101
-  correctNumbers: 03000000020000000200000003000000
+  correctNumbers: 03000000020000000200000004000000
   correctSliders: 0200000004000000030000000100000005000000
   imgGameClear: {fileID: 1472982947}
   fadeoutTexture: {fileID: 2800000, guid: 799a845c706d64c0788e59f152020f9d, type: 3}
@@ -3065,6 +3065,7 @@ MonoBehaviour:
   - {fileID: 2119325592194941718}
   - {fileID: 5825199869254847466}
   centerCam: {fileID: 906047449}
+  uiManager: {fileID: 1996155991}
 --- !u!4 &429490572
 Transform:
   m_ObjectHideFlags: 0
@@ -3826,7 +3827,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 644788758}
-  m_LocalRotation: {x: -0.11437352, y: 0.5703412, z: 0.080592565, w: 0.8094038}
+  m_LocalRotation: {x: -0.114373505, y: 0.5703412, z: 0.08059258, w: 0.80940366}
   m_LocalPosition: {x: 4.14, y: 0.17, z: 2.03}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -13353,6 +13354,7 @@ MonoBehaviour:
   generator: {fileID: 294442760}
   hintRobo: {fileID: 8475981265440629041}
   chestOpen: {fileID: 1130163632393596343}
+  camManager: {fileID: 429490571}
   treasureChest: {fileID: 0}
   roboTrigger: {fileID: 8475981265440629040}
   centerImageTrigger: {fileID: 2142044975}
@@ -14680,6 +14682,8 @@ MonoBehaviour:
   - value: "\u30AC\u30A4\u30B3\u30C4\u30D0\u30B9\u30BF\u30FC \u3092\u624B\u306B\u5165\u308C\u305F"
   - value: "\u9375\u306F\u304B\u304B\u3063\u3066\u3044\u306A\u3044..."
   - value: "\u9375\u304C\u304B\u304B\u3063\u3066\u3044\u308B..."
+  displayItemSprite:
+    value: {fileID: 0}
   txtQueriSwitch:
     value: OFF
   queriswitch: 0
@@ -14687,8 +14691,6 @@ MonoBehaviour:
   fade: {fileID: 643748160780730716}
   fadeImg: {fileID: 643748160780737602}
   txtTelop: {fileID: 168988514}
-  displayItemSprite:
-    value: {fileID: 0}
   imgCenter: {fileID: 2142044973}
   btnReturn: {fileID: 1491172908}
   sliders:
@@ -18945,7 +18947,7 @@ MonoBehaviour:
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
-  maskTexture: {fileID: 2800000, guid: 9fc33c5cf6a1d46e28447b452f2e8ab4, type: 3}
+  maskTexture: {fileID: 2800000, guid: 799a845c706d64c0788e59f152020f9d, type: 3}
   cutoutRange: 0
 --- !u!1 &643748160787251146
 GameObject:
@@ -18966,7 +18968,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &643748160809530464
 RectTransform:
   m_ObjectHideFlags: 0
@@ -28869,8 +28871,8 @@ MonoBehaviour:
   queriChanHead: {fileID: 2718488533993733999}
   rigidQueri: {fileID: 2718488536585776902}
   Ismovable: 0
-  speed: 0.05
-  limitSpeed: 0.05
+  speed: 0.1
+  limitSpeed: 0.1
   rotSpeed: 10
 --- !u!114 &2718488536585776904
 MonoBehaviour:
